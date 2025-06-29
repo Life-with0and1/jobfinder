@@ -12,7 +12,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch("https://jobfinder-backend-l5ywfhr45-ayushkumar013s-projects.vercel.app/api/user/login", {
+      const res = await fetch("https://jobfinder-backendd-q3p8dv2ol-ayushkumar013s-projects.vercel.app/api/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

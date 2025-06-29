@@ -1,30 +1,30 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../components/ContexProvider";
+import { ArrowLeft } from "lucide-react";
 
-function Signup() {
-  const { login } = useContext(Context);
+function Profile() {
+  const { user,login, logout } = useContext(Context);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
+    name: user.name || "",
+    email: user.email || "",
     password: "",
-    skills: [],
-    description: "",
-    isAvailableForJob: false,
-    location: "",
-    resumeLink: "",
+    skills: user.skills || [],
+    description: user.description || "",
+    isAvailableForJob: user.isAvailableForJob || false,
+    location: user.location || "",
+    resumeLink: user.resumeLink || "",
     socialLinks: {
-      linkedin: "",
-      github: "",
-      portfolio: "",
+      linkedin: user.socialLinks?.linkedin || "",
+      github: user.socialLinks?.github || "",
+      portfolio: user.socialLinks?.portfolio || "",
     },
   });
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
-
     if (name.startsWith("socialLinks.")) {
       const key = name.split(".")[1];
       setFormData((prev) => ({
@@ -44,30 +44,34 @@ function Signup() {
     setFormData((prev) => ({ ...prev, skills: skillsArray }));
   };
 
-  const handleSignup = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/api/user/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        `http://localhost:3000/api/user/update/${user._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await res.json();
 
       if (res.ok) {
-        const userToLogin = data.data;
-        console.log(userToLogin)
-        login(userToLogin);
-        alert("Signup successful!");
+        const userToLogin = Array.isArray(data.user)
+            ? data.user[0]
+            : data.user;
+          login(userToLogin);
+        alert("Profile updated successfully.");
         navigate("/");
       } else {
-        alert(data.message || "Signup failed.");
+        alert(data.message || "Update failed.");
       }
     } catch (err) {
-      console.error("Signup error:", err);
+      console.error("Update error:", err);
       alert("Something went wrong.");
     }
   };
@@ -75,11 +79,23 @@ function Signup() {
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-gray-50">
       <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-2xl font-semibold text-blue-600 mb-6 text-center">
-          Create an Account
-        </h1>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-row gap-1 items-center">
+            <ArrowLeft onClick={()=>navigate("/")} color="#2B7FFF"  className="cursor-pointer"/>
+             <h1 className="text-2xl font-semibold text-blue-600">
+            Update Details
+          </h1>
+          </div>
+         
+          <button
+            onClick={logout}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Logout
+          </button>
+        </div>
 
-        <form className="space-y-4" onSubmit={handleSignup}>
+        <form className="space-y-4" onSubmit={handleUpdate}>
           <input
             name="name"
             value={formData.name}
@@ -87,21 +103,7 @@ function Signup() {
             placeholder="Name"
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
           />
-          <input
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-          />
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-          />
+          
           <input
             value={formData.skills.join(", ")}
             onChange={handleSkillsChange}
@@ -129,6 +131,7 @@ function Signup() {
             placeholder="Resume Link"
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
           />
+
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -138,6 +141,7 @@ function Signup() {
             />
             <label>Available for Job</label>
           </div>
+
           <input
             name="socialLinks.linkedin"
             value={formData.socialLinks.linkedin}
@@ -164,22 +168,12 @@ function Signup() {
             type="submit"
             className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600"
           >
-            Sign Up
+            Update Profile
           </button>
         </form>
-
-        <p className="text-sm text-center text-gray-600 mt-4">
-          Already have an account?{" "}
-          <span
-            onClick={() => navigate("/login")}
-            className="text-blue-500 hover:underline cursor-pointer"
-          >
-            Login
-          </span>
-        </p>
       </div>
     </div>
   );
 }
 
-export default Signup;
+export default Profile;

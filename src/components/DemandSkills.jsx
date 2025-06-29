@@ -7,7 +7,7 @@ function DemandSkills() {
     const fn = async () => {
       try {
         const res = await fetch(
-          "http://localhost:3000/api/jobs/demandingSkills",
+          "https://jobfinder-backend-l5ywfhr45-ayushkumar013s-projects.vercel.app/api/jobs/demandingSkills",
           {
             method: "GET",
             headers: {

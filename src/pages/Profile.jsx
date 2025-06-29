@@ -48,7 +48,7 @@ function Profile() {
     e.preventDefault();
     try {
       const res = await fetch(
-        `https://jobfinder-backend-l5ywfhr45-ayushkumar013s-projects.vercel.app/api/user/update/${user._id}`,
+        `https://jobfinder-backendd-q3p8dv2ol-ayushkumar013s-projects.vercel.app/api/user/update/${user._id}`,
         {
           method: "PATCH",
           headers: {

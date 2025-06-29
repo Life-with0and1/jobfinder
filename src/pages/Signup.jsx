@@ -47,7 +47,7 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("https://jobfinder-backend-l5ywfhr45-ayushkumar013s-projects.vercel.app/api/user/register", {
+      const res = await fetch("https://jobfinder-backendd-q3p8dv2ol-ayushkumar013s-projects.vercel.app/api/user/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
